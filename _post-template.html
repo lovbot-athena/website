@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     BLOG POST TEMPLATE — how to make a new post
+     ============================================================================
+     1. COPY this file into the /posts folder and rename it, e.g. posts/post-4.html
+        (keep new posts inside /posts so the relative paths below stay correct).
+     2. Replace every [PLACEHOLDER] below with your real content
+        (title, date, image, and body paragraphs).
+     3. Add a card for it on the blog page. Open blog.html and paste this block
+        inside <div class="blog-grid"> (change the href + text to match):
+
+           <a class="card" href="posts/post-4.html">
+             <img class="card__img" src="IMAGE-URL-OR-PATH" alt="Post photo" />
+             <div class="card__body">
+               <div class="card__date">[Month DD, YYYY]</div>
+               <h3 class="card__title">[Post Title]</h3>
+               <p class="card__preview">[Short preview sentence.]</p>
+             </div>
+           </a>
+
+     NOTE: This file lives at the project root, so its paths use "css/..." etc.
+     Once you move your copy INTO /posts, the paths must start with "../"
+     (they already do in this template — see the <link>, links, and <script>).
+     ============================================================================ -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lovbot Athena — [POST TITLE]</title>
+  <!-- From inside /posts, the stylesheet is one folder up: -->
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== Top navigation bar (paths use ../ because this page is in /posts) ===== -->
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="../index.html">Lovbot <span>Athena</span></a>
+      <nav class="menu">
+        <button class="menu__button" aria-haspopup="true" aria-expanded="false">
+          Menu <span class="caret">▾</span>
+        </button>
+        <ul class="menu__list">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../blog.html">Blog</a></li>
+          <li><a href="../robot.html">About Our Robot</a></li>
+          <li><a href="../contact.html">Media &amp; Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- ===== /Top navigation bar ===== -->
+
+  <main class="container">
+    <a class="back-link" href="../blog.html">← Back to Blog</a>
+
+    <article class="post">
+      <div class="post__date">[Month DD, YYYY]</div>
+      <h1 class="post__title">[POST TITLE]</h1>
+
+      <img class="post__hero" src="https://placehold.co/1200x600?text=Photo" alt="[describe the photo]" />
+
+      <p>[PLACEHOLDER — write the first paragraph of the post here.]</p>
+      <p>[PLACEHOLDER — add as many paragraphs as you need.]</p>
+      <p>[PLACEHOLDER — final paragraph / wrap-up.]</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2025–2026 Lovbot Athena · RoboCup Junior Soccer</div>
+  </footer>
+
+  <script src="../js/menu.js"></script>
+</body>
+</html>

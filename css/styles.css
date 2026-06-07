@@ -1,0 +1,315 @@
+/* ============================================================
+   Lovbot Athena — shared styles
+   Dark theme: grey background, lavender/purple accent, white text.
+   This single file styles every page. Hand-edit freely.
+   ============================================================ */
+
+/* ---- Design tokens (change these to retheme the whole site) ---- */
+:root {
+  --bg:            #23232a;   /* page background (grey) */
+  --bg-raised:     #2d2d36;   /* cards, nav, dropdown    */
+  --bg-raised-2:   #353541;   /* hover surfaces          */
+  --text:          #ffffff;   /* primary text (white)    */
+  --text-muted:    #b8b8c4;   /* secondary text          */
+  --accent:        #b39ddb;   /* lavender/purple accent  */
+  --accent-strong: #9575cd;   /* deeper purple for hover */
+  --border:        #3d3d49;
+  --radius:        12px;
+  --maxw:          1100px;
+  --shadow:        0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---- Base ---- */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-strong); text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   Top navigation bar (appears on every page)
+   ============================================================ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav__inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+.nav__brand:hover { color: var(--accent); text-decoration: none; }
+.nav__brand span { color: var(--accent); }
+
+/* ---- Dropdown menu (top corner) ---- */
+.menu { position: relative; }
+
+.menu__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-raised-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.menu__button:hover { border-color: var(--accent); }
+.menu__button .caret { transition: transform 0.15s ease; color: var(--accent); }
+.menu__button[aria-expanded="true"] .caret { transform: rotate(180deg); }
+
+.menu__list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  display: none;
+}
+.menu__list.open { display: block; }
+
+.menu__list a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 7px;
+  color: var(--text);
+}
+.menu__list a:hover {
+  background: var(--bg-raised-2);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ============================================================
+   Page sections / typography
+   ============================================================ */
+main { padding: 40px 0 80px; }
+
+section { margin-bottom: 56px; }
+
+h1, h2, h3 { line-height: 1.2; }
+
+h2 {
+  font-size: 1.8rem;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+
+.muted { color: var(--text-muted); }
+
+.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ---- Hero (home page) ---- */
+.hero {
+  text-align: center;
+  padding: 80px 0 64px;
+  background:
+    radial-gradient(900px 400px at 50% -10%, rgba(179, 157, 219, 0.18), transparent 70%);
+}
+.hero h1 {
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  margin: 0;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+.hero .season {
+  margin-top: 8px;
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 4px;
+}
+
+/* ============================================================
+   Blog grid + cards
+   3 per row on desktop, wraps to 2 / 1 on narrow screens.
+   ============================================================ */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.card__img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: var(--bg-raised-2);
+}
+
+.card__body { padding: 16px 18px 20px; }
+
+.card__date {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.card__title {
+  font-size: 1.2rem;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+.card__preview {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Responsive: 2 columns on tablets, 1 on phones */
+@media (max-width: 860px) {
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .blog-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Individual blog post page
+   ============================================================ */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 24px;
+  padding: 8px 14px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+.back-link:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+.post {
+  max-width: 760px;
+}
+.post__date {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+.post__title {
+  font-size: 2.2rem;
+  margin: 0 0 16px;
+}
+.post__hero {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  background: var(--bg-raised-2);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+.post p { color: var(--text-muted); }
+
+/* ============================================================
+   Contact / media list
+   ============================================================ */
+.info-list { list-style: none; padding: 0; margin: 0; }
+.info-list li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.info-list .label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+/* ---- Members layout (home page) ---- */
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.member {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.member h3 { margin: 0 0 8px; color: var(--accent); }
+@media (max-width: 720px) {
+  .member-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
