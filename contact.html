@@ -11,14 +11,17 @@
   <!-- ===== Top navigation bar ===== -->
   <header class="nav">
     <div class="nav__inner">
-      <a class="nav__brand" href="index.html">Lovbot <span>Athena</span></a>
+      <div class="nav__left">
+        <span class="nav__logo">LOGO</span>
+        <a class="nav__brand" href="index.html">Lovbot <span>Athena</span></a>
+      </div>
       <nav class="menu">
         <button class="menu__button" aria-haspopup="true" aria-expanded="false">
           Menu <span class="caret">▾</span>
         </button>
         <ul class="menu__list">
           <li><a href="index.html">Home</a></li>
-          <li><a href="blog.html">Blog</a></li>
+          <li><a href="blog.html">Posts</a></li>
           <li><a href="robot.html">About Our Robot</a></li>
           <li><a href="contact.html">Media &amp; Contact</a></li>
         </ul>
@@ -35,17 +38,52 @@
       <ul class="info-list">
         <li>
           <span class="label">Team Email</span>
-          <a href="mailto:placeholder@example.com">placeholder@example.com</a>
-        </li>
-        <li>
-          <span class="label">Coach / Mentor Email</span>
-          <a href="mailto:placeholder-coach@example.com">placeholder-coach@example.com</a>
-        </li>
-        <li>
-          <span class="label">YouTube</span>
-          <a href="https://youtube.com" target="_blank" rel="noopener">https://youtube.com</a>
+          <p>
+            If you have any questions about us or our robot, feel free to email us at
+            <a href="lovebotathena@gmail.com">lovbotathena@gmail.com</a>
+          </p>
         </li>
       </ul>
+    </section>
+
+    <section>
+      <h2>Videos</h2>
+      <p>
+        Here is our YouTube Channel:
+        <a href="mailto:youtube.com">youtube.com</a>
+      </p>
+      <p class="placeholder">[insert a short line about our videos here. "we post blah blah"]</p>
+
+      <!-- ===== YouTube video previews — each card links out to the video.
+           To add a video: copy one <a class="video-card"> block, set its href
+           to the YouTube URL, swap the thumbnail src, and edit the title. ===== -->
+      <div class="video-grid">
+
+        <a class="video-card" href="https://youtube.com" target="_blank" rel="noopener">
+          <img class="video-card__thumb" src="https://placehold.co/480x270?text=Video+Thumbnail" alt="Video thumbnail placeholder" />
+          <div class="video-card__body">
+            <h3 class="video-card__title">[Video Title One]</h3>
+            <span class="video-card__meta">▶ Watch on YouTube</span>
+          </div>
+        </a>
+
+        <a class="video-card" href="https://youtube.com" target="_blank" rel="noopener">
+          <img class="video-card__thumb" src="https://placehold.co/480x270?text=Video+Thumbnail" alt="Video thumbnail placeholder" />
+          <div class="video-card__body">
+            <h3 class="video-card__title">[Video Title Two]</h3>
+            <span class="video-card__meta">▶ Watch on YouTube</span>
+          </div>
+        </a>
+
+        <a class="video-card" href="https://youtube.com" target="_blank" rel="noopener">
+          <img class="video-card__thumb" src="https://placehold.co/480x270?text=Video+Thumbnail" alt="Video thumbnail placeholder" />
+          <div class="video-card__body">
+            <h3 class="video-card__title">[Video Title Three]</h3>
+            <span class="video-card__meta">▶ Watch on YouTube</span>
+          </div>
+        </a>
+
+      </div>
     </section>
   </main>
 
