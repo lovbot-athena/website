@@ -37,7 +37,27 @@
 
     <section>
       <h2>Software</h2>
-      <p class="placeholder">[insert software details here — strategy, ball tracking, navigation.]</p>
+
+      <h3>Defense</h3>
+
+      <p>Our defending robot is responsible for protecting the goal whenever we lose possession of the ball. It has to continuously track the ball and position itself to block shots coming from any location or angle on the field.</p>
+
+      <p>To do this, the robot balances several priorities at once. As the ball moves around the field, it has to follow the ball's position and adjust, while at the same time holding an effective defensive position relative to our goal, which it identifies visually by colour, size, and shape. Balancing both stops the robot from blindly chasing the ball and leaving the goal exposed.</p>
+
+      <p>Each of these priorities produces its own movement vector, defined by a target direction and a magnitude that represents how strongly that priority is pulling. We combine these vectors mathematically into a single resultant motion command, and the resulting heading and speed steer the robot toward the most advantageous defensive position, optimising its angle relative to both the ball and the goal. Defence is its main job, however, the robot is also able to recognise a good scoring chance and can briefly switch to offensive behaviour, letting it transition quickly from defending to attacking before dropping back into its defensive role.</p>
+
+      <p>The robot's movement is driven by a closed-loop PID controller. This keeps it from overshooting its target position, cancels out small positioning errors and smooths out sudden jerks or oscillations, so the defender holds a more accurate position and reacts more fluidly as the play develops.</p>
+
+      <p>We put this positioning to the test and used the results to improve it, which you can read about in our <a href="posts/defense_eval.html">Defensive Performance Evaluation</a> post.</p>
+
+      <h3>Offense</h3>
+
+      <p>Our offense uses a north-oriented strategy, always keeping itself facing forward toward the opponent's goal. It also continually works its way behind the ball, so that any push drives the ball toward that goal. Instead of driving straight at the ball, which would just shove it forward with no control, the robot follows a curved path that swings it around behind the ball and lines it up with the goal. To make this precise, the offense code uses PID control: it reads the ball's distance and angle, and a distance-based PID term scales how sharply the robot curves. This is combined with an angle-based term shaped by a smooth exponential response, so the curving eases in gradually rather than linearly, and the robot applies an offset of up to 90° toward the correct side depending on whether the ball sits to its left or right.</p>
+
+      <p>This produces a smooth arc into the ball with no overshoot, and once the robot reaches the ball the controller resets so each new approach starts clean. On top of this, our offense leans on ball prediction to coordinate its movement: it anticipates which neutral spot the ball is most likely to be placed in, based on where it was most recently and where the most action is occurring across the field's segregated quadrants. That lets the robot decide where to park for the best chance of capturing the ball the moment it returns to play.</p>
+
+      <p>We break down how this curved approach was developed in our <a href="posts/offense_post.html">Offense Control Development</a> post.</p>
+
     </section>
   </main>
 
