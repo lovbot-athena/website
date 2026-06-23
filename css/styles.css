@@ -64,29 +64,13 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
 }
 
-/* Left group: logo placeholder + team name */
+/* Left group: placeholder + team name */
 .nav__left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* Logo placeholder — swap this for an <img> when you have a real logo */
-.nav__logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 9px;
-  background: var(--bg-raised-2);
-  border: 1px dashed var(--accent);
-  color: var(--accent);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  flex: 0 0 auto;
-}
 
 .nav__brand {
   font-weight: 700;
@@ -394,6 +378,26 @@ h2 {
 .member h3 { margin: 0 0 8px; color: var(--accent); }
 @media (max-width: 720px) {
   .member-grid { grid-template-columns: 1fr; }
+}
+
+ /*============================================================
+   Tables
+   ============================================================ */
+.post__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  color: #fff;
+}
+.post__table th,
+.post__table td {
+  border: 1px solid #fff;
+  padding: 8px 12px;
+  text-align: center;
+}
+.post__table th:first-child,
+.post__table td:first-child {
+  text-align: left;
 }
 
 /* ============================================================

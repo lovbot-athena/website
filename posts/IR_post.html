@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lovbot Athena — Adapting to the New IR Ball</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== Top navigation bar ===== -->
+  <header class="nav">
+    <div class="nav__inner">
+      <div class="nav__left">
+        <a class="nav__brand" href="../index.html">Lovbot <span>Athena</span></a>
+      </div>
+      <nav class="menu">
+        <button class="menu__button" aria-haspopup="true" aria-expanded="false">
+          Menu <span class="caret">▾</span>
+        </button>
+        <ul class="menu__list">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../blog.html">Posts</a></li>
+          <li><a href="../robot.html">About Our Robot</a></li>
+          <li><a href="../contact.html">Media &amp; Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- ===== /Top navigation bar ===== -->
+
+  <main class="container">
+    <a class="back-link" href="../blog.html">← Back to Posts</a>
+
+    <article class="post">
+      <div class="post__date">May 25, 2026</div>
+      <h1 class="post__title">Adapting to the New IR Ball</h1>
+
+      <!-- <img class="post__hero" src="https://placehold.co/1200x600?text=Photo" alt="[describe the photo]" /> -->
+
+      <p>This year's change to the IR ball was quite drastic and forced us to redesign some parts of our bot to be best adapted for gameplay. In this post, we'll talk about what we changed specifically.</p>
+
+      <h2>What changed about the ball</h2>
+
+      <p>There were two major changes to the IR ball this season. Firstly, the ball is now orange. Previous balls weren't a usable visual target, so vision systems had nothing reliable to lock onto and detection was mainly IR-only. The change to a bright orange ball against a green field makes it visible to a camera, which can be incorporated into ball detection systems. Second, and more disruptive, the ball got much smaller: its diameter dropped from 72 mm to 42 mm, a reduction of roughly 40%.</p>
+
+      <p>A smaller ball is a smaller infrared source and sits lower to the ground, which means the height at which our sensors read the signal needs to be modified. Additionally, because it is smaller and lighter, it travels faster and farther across the field; however this change also made it more practical to use a kicker when interacting with the ball.</p>
+
+      <h2>Lowering the IR ring</h2>
+
+      <p>The first part of our robot we changed was its physical geometry. The ball's infrared signal is strongest in a particular horizontal plane, and with the new, smaller ball, that plane dropped closer to the floor. Our IR ring had been positioned higher and was optimized for the old ball's height so that it was effectively looking right at where the strongest signal was. However, with the new ball, this view was slightly above where the strongest IR signal was, reducing our detection range and reliability. To compensate for this, we lowered the entire ring to bring the receivers back into the peak of the emitted signal. We found this change to be particularly effective and relatively easier than other methods that we considered, such as raising the sensor gain to amplify the weaker reading (since boosting the signal in software would have also amplified background noise). This solution restored the range and consistency we would otherwise have lost and did not require any additional electronics or computation.</p>
+
+      <h2>Adding additional IR sensors</h2>
+
+      <p>Additionally, the smaller ball caused ball angle detection to be less precise, as the angular gap between one possible position and the next was smaller. The omni IR ring reports the ball's bearing in 20-degree increments, which did not bring too many issues when the ball was larger and slower. However, the omni IR ring could not track the finer changes in direction of the smaller ball. We noticed in our testing that, due to the large angle increments, the robot would push the ball even when it was not directly at the front of the robot (anywhere from a ball angle above 320 degrees to an angle below 40 degrees). Rather than rebuild the whole ring at a finer spacing, we added a cluster of five extra sensors at the front of the robot, where the ball spends most of its contested time during an engagement. These sensors are configurable and concentrate angular resolution exactly where it matters most, in the robot's primary direction of play.</p>
+
+      <h2>Using a weighted vector to detect ball angle with three sensors</h2>
+
+      <table class="post__table">
+        <thead>
+          <tr>
+            <th>Sensor</th>
+            <th>Short-Distance Reliability</th>
+            <th>Long-Distance Reliability</th>
+            <th>Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Omni IR Eye</td><td>7</td><td>6.5</td><td>5</td></tr>
+          <tr><td>Precision Eye</td><td>8</td><td>2</td><td>8</td></tr>
+          <tr><td>Camera</td><td>9</td><td>3</td><td>10</td></tr>
+        </tbody>
+      </table>
+      <p><em>Table 1: Chart rating the omni and precision IR eyes and the camera (out of 10).</em></p>
+
+      <p>The most important change we made was that our logic no longer relied on a single sensor. Because the ball is now orange and visually distinct, we incorporated a camera and the additional precision IR eye into the ball angle and distance calculation alongside the omni IR ring. In general, no sensor is perfect. The omni IR ring is more reliable than the camera at further distances, but is coarse in angle. On the other hand, the camera struggles to resolve a small, dim ball at range, but up close the large orange ball is clear and gives the most precise reading of all. The front-mounted precision eye covers a shorter range than the ring but resolves the bearing more finely when the ball is ahead. So instead of choosing one, we weight each sensor by how well it can actually see the ball in the current situation, leaning on the ring when the ball is far and handing off smoothly to the camera and precision eye as it comes close. This turns three imperfect but complementary views into a single estimate that is more accurate and more robust than any of them on its own.</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2025–2026 Lovbot Athena · RoboCup Junior Soccer</div>
+  </footer>
+
+  <script src="../js/menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lovbot Athena — How Our Striker Learned to Curve</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+
+  <!-- ===== MathJax for equation rendering ===== -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+  <!-- ===== /MathJax ===== -->
+</head>
+<body>
+
+  <!-- ===== Top navigation bar ===== -->
+  <header class="nav">
+    <div class="nav__inner">
+      <div class="nav__left">
+        <a class="nav__brand" href="../index.html">Lovbot <span>Athena</span></a>
+      </div>
+      <nav class="menu">
+        <button class="menu__button" aria-haspopup="true" aria-expanded="false">
+          Menu <span class="caret">▾</span>
+        </button>
+        <ul class="menu__list">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="../blog.html">Posts</a></li>
+          <li><a href="../robot.html">About Our Robot</a></li>
+          <li><a href="../contact.html">Media &amp; Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- ===== /Top navigation bar ===== -->
+
+  <main class="container">
+    <a class="back-link" href="../blog.html">← Back to Posts</a>
+
+    <article class="post">
+      <div class="post__date">June 2, 2026</div>
+      <h1 class="post__title">Ball-Approach Control of the Offense Robot</h1>
+
+      <!-- <img class="post__hero" src="https://placehold.co/1200x600?text=Photo" alt="[describe the photo]" /> -->
+
+        <p>Our offensive robot's main role is to get behind the ball, line up with the opponent's goal, and push. 
+          One part we focused on in our work is getting behind the ball. If the robot drives straight at the ball,
+           it shoves it in whatever direction the robot happens to be facing, which is almost never toward the goal.
+            What we actually want is a curved approach that loops the robot around the ball so that, by the time it
+             makes contact, it is already pointed at the target. Here’s the story of how we developed the code:</p>
+
+      <h2>Background</h2>
+
+        <p>Every control loop, the IR eye gives us two numbers: the ball's bearing $\theta$ (in compass convention,
+           $0^\circ$ straight ahead, increasing clockwise through $[0^\circ, 360^\circ)$) and a proximity reading $V$
+            from the IR signal strength, where a larger value means the ball is closer. From these we compute a singl
+             output, the heading we actually drive:</p>
+
+        <p>$$\theta_{\text{final}} = \theta + (\text{sideways offset}).$$</p>
+
+        <p>The offset is what bends the path. Driving at $\theta$ with zero offset makes the robot charge the ball 
+          head-on; adding an offset aims it slightly to one side of it, which sweeps the robot around. The side we 
+          lean toward depends on the relative location of the ball:</p>
+
+        <p>$$s = \operatorname{sgn}(180^\circ - \theta) = \begin{cases} +1 & \theta \lt 180^\circ \ \text{(ball on the right)}\\ -1 & \theta \gt 180^\circ \ \text{(ball on the left)}\end{cases}$$</p>
+
+        <p>The engineering problem we’re solving is choosing <em>how large</em> that offset should be at any given moment. Three versions of answers follow.</p>
+
+      <h2>Version 1: a fixed ratio</h2>
+
+      <p>The first version used a constant. We picked a single fraction $\rho_0 \in [0,1]$ of the maximum $90^\circ$ 
+        offset and applied it everywhere:</p>
+
+      <p>$$\theta_{\text{final}} = \theta + s \cdot 90^\circ \cdot \rho_0.$$</p>
+
+      <p>This is the simplest thing that produces a curve, and we handled it with a separate if statement that set 
+        the offset to a fixed value depending on where the ball was. It taught us immediately why a constant cannot 
+        work. The amount of curving we need is not constant. When the ball is far off to the side, we want a large 
+        lateral component so the robot swings wide and comes around. When the robot is nearly on top of the ball and 
+        already lined up, we want the offset to collapse toward zero so it drives straight through. A single fixed 
+        offset forces one compromise for both situations, and because it switched in an if statement rather than 
+        scaling smoothly, the change was abrupt. As a result, the robot kept overshooting the ball, swinging too 
+        hard when it should have. We did not like this behavior and this pushed us to find something that is more dynamic.</p>
+
+      <h2>Version 2: a square-root law</h2>
+
+      <p>The fix was to make the offset depend on the measurements instead of being constant. We introduced a normalized proximity term,</p>
+
+      <p>$$u = \operatorname{clamp}\!\left(\frac{V - V_{\min}}{V_{\max} - V_{\min}},\ 0,\ 1\right),$$</p>
+
+      <p>with $V_{\min} \approx 10$ and $V_{\max} \approx 70$ taken from the eye's working range, and then 
+        scaled it through a power law rather than feeding it in linearly:</p>
+
+      <p>$$\rho(u) = u^{\,p}, \qquad p \approx 0.65 \ \ (\text{a pure square root is } p = 0.5).$$</p>
+
+      <p>We combined this with a normalized off-center angle $\alpha_{\text{lin}} = \operatorname{clamp}(\beta / 135^\circ,\ 0,\ 1)$, where $\beta$ is the ball's angular distance from straight ahead, giving</p>
+
+      <p>$$\theta_{\text{final}} = \theta + s \cdot 90^\circ \cdot u^{\,p} \cdot \alpha_{\text{lin}}.$$</p>
+
+      <p>The reason a square-root-style curve beats a linear one is its shape. A concave function like 
+        $u^{0.65}$ has a steep slope near zero and a shallow slope near one, so it front-loads the response: 
+        even a modest amount of proximity or off-centeredness produces a large early correction, and the 
+        response then eases off as the robot converges. In practice this gave us an aggressive swing when 
+        the robot was far from or beside the ball, tapering into a gentle, controlled line-up as it closed in. 
+        It was a substantial improvement, and for a while it was good enough.</p>
+
+      <p>However, this solution also has the weaknesses of any open-loop map. The function $\rho(u)$ is a 
+        fixed lookup from sensor reading to offset, with no memory and no sense of how the robot is actually 
+        behaving. It carries no integral term, so a small persistent misalignment never gets corrected; the 
+        robot can settle into a slightly-wrong approach and stay there. It carries no rate term, so when the 
+        robot's own momentum lags the command, the path can still overshoot and wobble. And the exponent $p$ 
+        is hand-tuned, so a value that feels right on one surface or at one speed drifts out of tune on another. 
+        Most of all, it ignores disturbances. A bump, or the ball drifting as we approach, throws off the static 
+        map with nothing to pull us back.</p>
+
+      <h2>Version 3: PID</h2>
+
+      <p>The final version replaced the static distance map with a closed-loop PID controller. Instead of reading the proximity and looking up an offset, we now define an error against a target engagement reading $V_{\text{set}}$ (the distance at which we want to be tracking the ball) and let a controller drive that error to zero:</p>
+
+      <p>$$e(t) = V_{\text{set}} - V(t),$$</p>
+
+      <p>$$D(t) = \operatorname{clamp}\!\Big(K_p\,e(t) + K_i\!\int_0^t \! e(\tau)\,d\tau + K_d\,\frac{de(t)}{dt},\ \ 0,\ 100\Big),$$</p>
+
+      <p>with our tuned gains $K_p = 2.5$, $K_i = 0$, $K_d = 0.010$ and the controller running in reverse-acting mode. The output $D \in [0,100]$ replaces the old $u^{\,p}$ as the distance scaling. We also upgraded the angle term from a clamped line to a saturating exponential, which removes the hard corner the linear clamp produced at its boundary:</p>
+
+      <p>$$\alpha = \frac{180^\circ - \lvert\,\theta - 180^\circ\,\rvert}{180^\circ} \in [0,1], \qquad g(\alpha) = 1 - e^{-k\alpha}, \quad k = 3.$$</p>
+
+      <p>Putting the two together gives the steering law the robot runs today:</p>
+
+      <p>$$\theta_{\text{final}} = \theta + \operatorname{sgn}(180^\circ - \theta)\cdot 90^\circ \cdot \frac{D}{100}\cdot\left(1 - e^{-k\alpha}\right).$$</p>
+
+      <p>Or written out in full, with the distance PID expanded and the $90/100$ scaling folded into $9/10$, the entire law reads as a single self-contained expression:</p>
+
+      <p>$$\theta_{\text{final}}(t) = \theta + \operatorname{sgn}(180^\circ-\theta)\cdot\frac{9}{10}\left[K_p\,e(t) + K_i\!\int_0^t \! e(\tau)\,d\tau + K_d\,\frac{de(t)}{dt}\right]\left(1 - \exp\!\left(-\,k\cdot\frac{180^\circ - \lvert\theta - 180^\circ\rvert}{180^\circ}\right)\right)$$</p>
+
+      <p>Each piece of the controller earns its place. The proportional term $K_p e$ produces an immediate correction in proportion to how far we are from the desired engagement distance, which is the responsiveness that the fixed ratio lacked. The derivative term $K_d\,\dot e$ reacts to the <em>rate</em> the error is changing and acts as a brake, easing the correction off before the robot overshoots and damping the oscillation that the open-loop map could not suppress; our small $K_d = 0.010$ supplies exactly that light damping without making the response sluggish. The integral term $K_i$ accumulates persistent error and would erase any steady-state offset that the proportional term alone leaves behind; we currently run it at zero and lean on P and D, which leaves a clear lever for future tuning. Because the whole thing is a feedback loop, it measures what the robot is actually doing every cycle and corrects against disturbances that the static square-root law simply absorbed.</p>
+
+      <p>The exponential angle gain $g(\alpha)$ complements this. It behaves almost linearly for small $\alpha$, so tiny misalignments produce proportionally tiny offsets, then saturates smoothly toward one as the ball moves far off-center, which guarantees the offset can never exceed the intended $90^\circ$ regardless of input. The constant $k = 3$ sets how quickly that saturation arrives.</p>
+
+      <p>One last detail keeps the loop honest. The moment the robot reaches the ball, we call a reset that re-initializes the controller's output limits and clears its accumulated state. This prevents integral windup from carrying stale correction into the next pursuit, so every fresh approach begins from a clean slate.</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2025–2026 Lovbot Athena · RoboCup Junior Soccer</div>
+  </footer>
+
+  <script src="../js/menu.js"></script>
+</body>
+</html>
