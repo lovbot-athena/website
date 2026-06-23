@@ -157,14 +157,12 @@ h2 {
    for your real banner image. The dark overlay keeps the title readable. */
 .hero {
   text-align: center;
-  padding: 120px 24px 96px;
-  background-image:
-    linear-gradient(rgba(35, 35, 42, 0.55), rgba(35, 35, 42, 0.78)),
-    url("https://placehold.co/1920x520?text=Banner+Photo+Placeholder");
-  background-size: cover;
+  background-image: url("../images/newbanner.png");
+  background-size: cover;       /* fills the box, crops the sides */
   background-position: center;
   background-repeat: no-repeat;
   border-bottom: 3px solid var(--accent);
+  padding: 120px 24px 250px;
 }
 .hero h1 {
   font-size: clamp(2.6rem, 7vw, 5rem);
